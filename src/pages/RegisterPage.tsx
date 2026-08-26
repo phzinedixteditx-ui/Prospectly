@@ -16,19 +16,8 @@ export const RegisterPage: React.FC<Props> = ({ onNavigate }) => {
   const { loginWithGoogle } = useAuth();
   const toast = useToast();
 
-  const handleGoogleRegister = async () => {
-    setGoogleLoading(true);
-    try {
-      const ok = await loginWithGoogle();
-      if (ok) {
-        toast.success('Conta criada com sucesso via Google!');
-        onNavigate('dashboard');
-      }
-    } catch {
-      setShowGoogleModal(true);
-    } finally {
-      setGoogleLoading(false);
-    }
+  const handleGoogleRegister = () => {
+    setShowGoogleModal(true);
   };
 
   const handleGoogleSuccess = async (profile: { name: string; email: string; avatar: string }) => {

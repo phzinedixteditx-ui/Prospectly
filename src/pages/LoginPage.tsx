@@ -16,19 +16,8 @@ export const LoginPage: React.FC<Props> = ({ onNavigate }) => {
   const { loginWithGoogle } = useAuth();
   const toast = useToast();
 
-  const handleGoogleLogin = async () => {
-    setGoogleLoading(true);
-    try {
-      const ok = await loginWithGoogle();
-      if (ok) {
-        toast.success('Autenticado com sucesso via Google!');
-        onNavigate('dashboard');
-      }
-    } catch {
-      setShowGoogleModal(true);
-    } finally {
-      setGoogleLoading(false);
-    }
+  const handleGoogleLogin = () => {
+    setShowGoogleModal(true);
   };
 
   const handleGoogleSuccess = async (profile: { name: string; email: string; avatar: string }) => {

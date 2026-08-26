@@ -33,17 +33,6 @@ export const GoogleAuthService = {
    * Prompts the user with real Google OAuth popup and retrieves real profile data
    */
   async signInWithGoogle(): Promise<GoogleUserProfile> {
-    if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin
-        }
-      });
-      if (error) throw error;
-      return new Promise(() => {}); // Browser will redirect to Google
-    }
-
     const clientId = this.getGoogleClientId();
     if (!this.hasValidClientId()) {
       throw new Error('Google Client ID não configurado. Por favor, confirme seus dados.');

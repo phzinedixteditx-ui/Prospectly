@@ -108,7 +108,7 @@ export const RegisterPage: React.FC<Props> = ({ onNavigate }) => {
         <div className="pt-4 border-t border-zinc-800/80 space-y-2 text-left text-xs text-zinc-400">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span>5 Créditos de IA diários inclusos</span>
+            <span>Criação de demonstração de site inclusa</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />

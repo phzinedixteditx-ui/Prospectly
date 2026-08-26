@@ -13,7 +13,7 @@ declare global {
   }
 }
 
-const DEFAULT_GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+const DEFAULT_GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '327866267075-k63apeda2ie4bk82ffof8iljs0ns0jmb.apps.googleusercontent.com';
 
 export const GoogleAuthService = {
   getGoogleClientId(): string {

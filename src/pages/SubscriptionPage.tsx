@@ -106,10 +106,10 @@ export const SubscriptionPage: React.FC<Props> = ({ onNavigate }) => {
         </div>
 
         <div className="space-y-1.5 text-xs text-zinc-300 border-l border-zinc-800/80 pl-4">
-          <p className="font-semibold text-white">Créditos de IA Diários:</p>
-          <p className="text-zinc-400">{currentPlan.aiCreditsPerDay} créditos/dia (renovação diária)</p>
+          <p className="font-semibold text-white">Demonstrações & Sites Ativos:</p>
+          <p className="text-zinc-400">{currentPlan.maxProjects === 9999 ? 'Ilimitados' : `Até ${currentPlan.maxProjects} sites simultâneos`}</p>
           <p className="font-semibold text-white mt-2">Marca d'água:</p>
-          <p className="text-zinc-400">{user?.plan === 'free' ? 'Ativa (removível no Pro/Full)' : 'Desativada (100% White-label)'}</p>
+          <p className="text-zinc-400">{user?.plan === 'free' ? 'Ativa (removível no Pro/Full)' : 'Desativada (100% White-Label)'}</p>
         </div>
 
         <div className="flex flex-col gap-2">

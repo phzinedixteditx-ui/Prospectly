@@ -213,6 +213,7 @@ export interface SiteConfig {
   theme: SiteTheme;
   sections: SiteSection[];
   publishedUrl?: string;
+  creatorPlan?: PlanType;
   createdAt: string;
   updatedAt: string;
 }

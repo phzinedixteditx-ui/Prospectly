@@ -10,18 +10,17 @@ export const PLANS: Record<PlanType, PlanConfig> = {
     searchesLimit: 5,
     searchesPeriod: 'mês',
     leadsLimit: 5,
-    aiCreditsPerDay: 5,
+    aiCreditsPerDay: 0,
     maxProjects: 1,
-    limitsText: '5 buscas/mês • 5 leads/mês • 5 créditos IA/dia',
+    limitsText: '5 buscas/mês • 5 leads salvos • 1 site ativo',
     features: [
       '5 pesquisas de empresas por mês',
-      '5 leads salvos por mês',
-      '5 créditos de IA por dia',
+      '5 leads salvos no pipeline',
       'Criação de 1 demonstração de site',
-      'Editor IA básico',
-      'Marca d\'água Prospectly inclusa',
-      'Opportunity Score padrão',
-      'Geração de abordagens comerciais'
+      'Design Studio com temas e fontes livres',
+      'Rastreador de acessos da demonstração',
+      'Calculadora de oportunidade e perda estimada',
+      'Marca d\'água Prospectly inclusa'
     ]
   },
   pro: {
@@ -36,19 +35,19 @@ export const PLANS: Record<PlanType, PlanConfig> = {
     searchesLimit: 50,
     searchesPeriod: 'mês',
     leadsLimit: 50,
-    aiCreditsPerDay: 20,
+    aiCreditsPerDay: 0,
     maxProjects: 5,
-    limitsText: '50 buscas/mês • 50 leads/mês • 20 créditos IA/dia',
+    limitsText: '50 buscas/mês • 50 leads salvos • Até 5 sites',
     features: [
-      '50 pesquisas de empresas por mês',
-      '50 leads salvos por mês',
-      '20 créditos de IA por dia (renovação diária)',
-      'Sem marca d\'água nos sites',
+      '50 pesquisas de empresas no Google Maps por mês',
+      '50 leads salvos no pipeline',
+      'Sem marca d\'água nos sites dos clientes',
       'Até 5 projetos de sites simultâneos',
-      'Design Studio Pro completo desbloqueado',
-      'Análise detalhada de oportunidades',
-      'Publicação de demonstrações com link exclusivo',
-      'Exportação de contatos e abordagens WhatsApp'
+      'Design Studio PRO com 16+ Temas e Tipografias de Luxo',
+      'Rastreador de acessos em tempo real (Lead no Radar)',
+      'Mini CRM Kanban de Negociação',
+      'Gerador Automático de Propostas & Mini-Contratos',
+      'Central de Quebra de Objeções para WhatsApp'
     ]
   },
   full: {
@@ -62,18 +61,18 @@ export const PLANS: Record<PlanType, PlanConfig> = {
     searchesLimit: 100,
     searchesPeriod: 'dia',
     leadsLimit: 9999,
-    aiCreditsPerDay: 100,
+    aiCreditsPerDay: 0,
     maxProjects: 9999,
-    limitsText: '100 buscas/dia • Leads ilimitados • 100 créditos IA/dia',
+    limitsText: '100 buscas/dia • Leads e Sites ilimitados',
     features: [
-      '100 pesquisas de empresas por dia',
-      'Leads ilimitados nas buscas',
-      '100 créditos de IA por dia (Modo Turbo)',
+      '100 pesquisas de empresas por dia no Google Maps',
+      'Leads e contatos ilimitados nas buscas',
       'Sem marca d\'água nos sites',
       'Criação e publicação ilimitada de sites',
-      'Design Studio Pro com todos os recursos e temas',
-      'Auditoria completa de presença digital',
-      'Domínio customizado e publicação instantânea',
+      'Modo Agência White-Label oficial (sua logo e marca)',
+      'Design Studio PRO completo com todos os recursos',
+      'Conexão de domínio próprio personalizado',
+      'Auditoria de presença digital e propostas ilimitadas',
       'Suporte prioritário VIP via WhatsApp'
     ]
   }

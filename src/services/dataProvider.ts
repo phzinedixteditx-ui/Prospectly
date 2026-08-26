@@ -11,9 +11,12 @@ interface SearchParams {
   filterHighOpportunity?: boolean;
 }
 
+const DEFAULT_APIFY_TOKEN = 'apify_api_dF9VCtaPvl20GS34AF7s9wwKLx6Jsq4hRtYU';
+const DEFAULT_GOOGLE_KEY = 'AIzaSyD_pO5XlA_hPObe2yZDy0ROqbWEuPPchng';
+
 export const DataProvider = {
   getApifyToken(): string {
-    return localStorage.getItem('prospectly_apify_token') || import.meta.env.VITE_APIFY_API_TOKEN || '';
+    return localStorage.getItem('prospectly_apify_token') || import.meta.env.VITE_APIFY_API_TOKEN || DEFAULT_APIFY_TOKEN;
   },
 
   setApifyToken(token: string): void {
@@ -21,7 +24,7 @@ export const DataProvider = {
   },
 
   getGooglePlacesKey(): string {
-    return localStorage.getItem('prospectly_google_places_key') || import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+    return localStorage.getItem('prospectly_google_places_key') || import.meta.env.VITE_GOOGLE_MAPS_API_KEY || DEFAULT_GOOGLE_KEY;
   },
 
   setGooglePlacesKey(key: string): void {
@@ -31,7 +34,7 @@ export const DataProvider = {
   async searchCompanies(params: SearchParams): Promise<Company[]> {
     const { query, location, limit = 20, filterNoWebsite, filterHighOpportunity } = params;
     
-    // 1. Try Apify Google Maps Scraper Actor (if token is provided)
+    // 1. Try Apify Google Maps Scraper Actor (Real Google Maps Live Scraper)
     const apifyToken = this.getApifyToken();
     if (apifyToken) {
       try {
@@ -61,7 +64,7 @@ export const DataProvider = {
     }
 
 
-    // 2. Try Google Places API if user provided a key
+    // 3. Try Google Places API if user provided a key
     const googleKey = this.getGooglePlacesKey();
     if (googleKey) {
       try {
@@ -77,7 +80,7 @@ export const DataProvider = {
       }
     }
 
-    // 3. Try OpenStreetMap / Nominatim live data
+    // 4. Try OpenStreetMap / Nominatim live data
     try {
       const osmResults = await this.fetchFromNominatim(query, location, limit);
       if (osmResults && osmResults.length > 0) {
@@ -90,7 +93,7 @@ export const DataProvider = {
       console.warn('OSM fetch fallback to dynamic realistic engine:', e);
     }
 
-    // 4. Dynamic Location-Aware Engine with Real City/DDD Data
+    // 5. Dynamic Location-Aware Engine with Real City/DDD Data
     const realistic = this.generateRealisticCompanies(query, location, limit);
     let filtered = realistic;
     if (filterNoWebsite) filtered = filtered.filter(c => !c.hasWebsite);
@@ -161,7 +164,7 @@ export const DataProvider = {
     };
 
     try {
-      // 1. Try Compass Google Places Actor
+      // 1. Try Compass Google Places Actor (Fast & Real Google Maps Places)
       const url = `https://api.apify.com/v2/acts/compass~crawler-google-places/run-sync-get-dataset-items?token=${token}&timeout=60`;
       const res = await fetch(url, {
         method: 'POST',
@@ -182,19 +185,20 @@ export const DataProvider = {
         }
       }
     } catch (err) {
-      console.warn('Apify actor crawler-google-places failed, trying nweller actor:', err);
+      console.warn('Apify actor crawler-google-places error:', err);
     }
 
     try {
-      // 2. Try Nweller Google Maps Scraper Actor
-      const url2 = `https://api.apify.com/v2/acts/nweller~google-maps-scraper/run-sync-get-dataset-items?token=${token}&timeout=60`;
+      // 2. Try Drobnikj Google Places Scraper Actor
+      const url2 = `https://api.apify.com/v2/acts/drobnikj~crawler-google-places/run-sync-get-dataset-items?token=${token}&timeout=60`;
       const res2 = await fetch(url2, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           searchStringsArray: [searchString],
-          maxCrawledPlaces: Math.min(limit, 30),
-          language: 'pt-BR'
+          maxCrawledPlacesPerSearch: Math.min(limit, 30),
+          language: 'pt-BR',
+          countryCode: 'br'
         })
       });
 

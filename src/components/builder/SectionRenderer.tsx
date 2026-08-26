@@ -40,7 +40,7 @@ export const SectionRenderer: React.FC<Props> = ({ site, previewMode = false, ov
   const isTablet = currentDevice === 'tablet';
   const storedUser = StorageService.getUser();
   const activePlan = user?.plan || storedUser?.plan || 'free';
-  const isFreePlan = activePlan === 'free';
+  const isFreePlan = site.creatorPlan ? site.creatorPlan === 'free' : (activePlan === 'free');
 
 
   const bgColor = theme.backgroundColor || '#090a10';
@@ -830,13 +830,13 @@ export const SectionRenderer: React.FC<Props> = ({ site, previewMode = false, ov
 
       {/* Free Plan Watermark Badge with Logo and X button */}
       {isFreePlan && (
-        <div className="fixed bottom-4 right-4 z-40 flex items-center gap-2 bg-zinc-950/95 border border-zinc-700/80 text-zinc-200 py-1.5 px-3 rounded-full shadow-2xl backdrop-blur-md text-[11px] font-semibold animate-fade-in select-none group">
-          <div 
+        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-zinc-950/95 border border-zinc-700/80 text-zinc-200 py-1.5 px-3 rounded-full shadow-2xl backdrop-blur-md text-[11px] font-semibold animate-fade-in select-none group">
+          <a 
+            href="https://prospectly-tau.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center gap-2 cursor-pointer hover:text-white transition-colors"
-            onClick={() => {
-              toast.info('Para retirar a marca d\'água e conectar domínio próprio, assine o plano PRO ou FULL!');
-              if (onNavigate) onNavigate('subscription');
-            }}
+            title="Criado com Prospectly • Clique para conhecer"
           >
             {/* Prospectly Logo Monogram */}
             <div className="w-5 h-5 rounded-md bg-zinc-900 border border-zinc-700 flex items-center justify-center shadow-inner relative overflow-hidden shrink-0">
@@ -846,14 +846,18 @@ export const SectionRenderer: React.FC<Props> = ({ site, previewMode = false, ov
                 <path d="M24 16.5C21.5 14.5 16 14.5 14 17C12 19.5 13 22 17 22.5C21 23 23.5 24 23 26.5C22.5 29 18 29.5 13 28" stroke="#e4e4e7" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <span>edit by <strong className="text-white font-bold">Prospectly</strong></span>
-          </div>
+            <span>edit by <strong className="text-white font-bold hover:underline">Prospectly</strong></span>
+          </a>
 
           <button
             onClick={(e) => {
               e.stopPropagation();
-              toast.info('Para retirar a marca d\'água e conectar domínio próprio, assine o plano PRO ou FULL!');
-              if (onNavigate) onNavigate('subscription');
+              toast.info('Para retirar a marca d\'água deste site e conectar seu domínio próprio, assine o plano PRO ou FULL!');
+              if (onNavigate) {
+                onNavigate('subscription');
+              } else {
+                window.open('https://prospectly-tau.vercel.app', '_blank');
+              }
             }}
             className="w-4 h-4 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer text-[10px] ml-1"
             title="Remover marca d'água (Requer Plano PRO/FULL)"

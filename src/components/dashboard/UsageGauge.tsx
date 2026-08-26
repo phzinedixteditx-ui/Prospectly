@@ -71,19 +71,19 @@ export const UsageGauge: React.FC<Props> = ({ usage, plan, onUpgrade }) => {
           </div>
         </div>
 
-        {/* Créditos IA Hoje */}
+        {/* Projetos de Sites Ativos */}
         <div>
           <div className="flex items-center justify-between text-xs font-semibold mb-1.5">
             <span className="text-zinc-300 flex items-center gap-1.5">
               <Activity className="w-3.5 h-3.5 text-zinc-400" />
-              Créditos de IA Diários
+              Demonstrações Criadas
             </span>
-            <span className="text-white font-bold font-mono text-xs">{usage.aiCreditsToday} / {usage.aiCreditsDailyLimit}</span>
+            <span className="text-white font-bold font-mono text-xs">{usage.projectsCreated} / {usage.projectsLimit === 9999 ? '∞' : usage.projectsLimit}</span>
           </div>
           <div className="w-full h-2 rounded-full bg-zinc-900 border border-zinc-800 overflow-hidden">
             <div 
-              className="h-full bg-zinc-100 rounded-full transition-all duration-300"
-              style={{ width: `${aiCreditsPct}%` }}
+              className="h-full bg-indigo-400 rounded-full transition-all duration-300"
+              style={{ width: `${Math.min(100, Math.round((usage.projectsCreated / (usage.projectsLimit || 1)) * 100))}%` }}
             />
           </div>
         </div>

@@ -45,13 +45,12 @@ export const StorageService = {
   getUser(): User | null {
     const data = localStorage.getItem(STORAGE_KEYS.USER);
     if (!data) {
-      this.setUser(DEFAULT_USER);
-      return DEFAULT_USER;
+      return null;
     }
     try {
       return JSON.parse(data);
     } catch {
-      return DEFAULT_USER;
+      return null;
     }
   },
 

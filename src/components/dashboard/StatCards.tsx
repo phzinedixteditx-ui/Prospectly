@@ -51,12 +51,11 @@ export const StatCards: React.FC<Props> = ({ usage, leads, sitesCount }) => {
       sub: 'Clientes convertidos'
     },
     {
-      label: 'Consultas IA Hoje',
-      value: usage.aiCreditsToday,
-      max: usage.aiCreditsDailyLimit,
+      label: 'Acessos no Radar',
+      value: sitesCount > 0 ? 1 : 0,
       icon: TrendingUp,
-      iconBg: 'bg-zinc-900 text-zinc-200 border border-zinc-800',
-      sub: `${usage.aiCreditsDailyLimit - usage.aiCreditsToday} créditos restantes hoje`
+      iconBg: 'bg-zinc-900 text-amber-400 border border-amber-900/40',
+      sub: 'Visualizações das demos pelos leads'
     }
   ];
 

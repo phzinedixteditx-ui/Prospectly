@@ -38,16 +38,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const loginWithGoogle = async (customUser?: { name: string; email: string; avatar?: string }): Promise<boolean> => {
     let profile = customUser;
     if (!profile) {
-      try {
-        profile = await GoogleAuthService.signInWithGoogle();
-      } catch (err) {
-        console.warn('Google sign-in error:', err);
-      }
+      profile = await GoogleAuthService.signInWithGoogle();
     }
 
-    const name = profile?.name || 'Matheus Felipe (Google)';
-    const email = profile?.email || 'matheus.felipe@gmail.com';
-    const avatar = profile?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
+    if (!profile || !profile.email) {
+      return false;
+    }
+
+    const name = profile.name || profile.email.split('@')[0];
+    const email = profile.email;
+    const avatar = profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(name || email)}&background=0D8ABC&color=fff&size=200`;
 
     const googleUser: User = {
       id: 'google_' + Math.random().toString(36).substring(2, 9),
@@ -56,8 +56,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       avatar,
       role: 'user',
       selectedService: 'website_builder',
-      targetRegion: 'Barão de Cocais, MG',
-      targetBusinessType: 'Restaurantes e Barbearias',
+      targetRegion: 'Brasil',
+      targetBusinessType: 'Negócios Locais',
       onboardingCompleted: true,
       plan: 'free',
       subscriptionStatus: 'active',

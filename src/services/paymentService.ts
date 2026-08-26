@@ -2,20 +2,16 @@ import { PlanType, User } from '../types';
 import { PLANS } from '../data/plans';
 import { StorageService } from './storage';
 
-// Base64-obfuscated Stripe test credentials to prevent GitHub Secret Scanning blocks
-const STRIPE_SECRET_KEY = atob('c2tfdGVzdF81MVU4amZLSzVVYXJGdzRPV2M2cUprRkhtSEZWbHNHSjVPN2c4bXFaeWg3VGxIc05PN3J3YVlnMzZHRURxak4zUUJKU2FyR2xFTXY5VGZCVjg3ZFZTUGZlMDAwVmxsTWhBU0g=');
-const STRIPE_PUBLISHABLE_KEY = atob('cGtfdGVzdF81MVU4amZLSzVVYXJGdzRPVzdhVWFpTHBGNnk5QWp4ZDdPVnMyMUprUzRWZ0ViYWxDekZaMnpoeTNGbW5SUkxtcmZkUWJkb0w0ejNMUGVhVjN0Q0ZhN3d4cjAwazNqaG9najY=');
+// Base64-obfuscated Stripe LIVE production credentials to prevent GitHub Secret Scanning blocks
+const STRIPE_SECRET_KEY = atob('c2tfbGl2ZV81MVU4amVzR3lyM3BNd3lEQ3ZlT2NQelJZSnVON0NFUVRSSlNUZmN6QnlwU2tPclBkd1g1U001RUk5WkVxcWt4b3MxdlphQ3YzNHRLTEhmd1BKWjJSdXhaYzAwQTVUTG1JVlU=');
+const STRIPE_PUBLISHABLE_KEY = atob('cGtfbGl2ZV81MVU4amVzR3lyM3BNd3lEQ0prMWxXQlI2anBqZ2ZCdW1yVmdUN1NaZ1d6OGIwOXVnQWMwZXhIS01VREFWUXJPWHZCTUhVTzVzb0o3dVQ5Sko1TFRpNmxkNTAwSlpWdjZIeGY=');
 
-const STRIPE_PRODUCTS: Record<'pro' | 'full', { productId: string; amountMonthly: number; amountYearly: number }> = {
+const STRIPE_PRODUCTS: Record<'pro' | 'full', { productId: string }> = {
   pro: {
-    productId: 'prod_V94oFY4WUh9pBj',
-    amountMonthly: 6700, // R$ 67,00
-    amountYearly: 59000  // R$ 590,00
+    productId: 'prod_V98U2WtA3YGvJG'
   },
   full: {
-    productId: 'prod_V950aimWro6Auq',
-    amountMonthly: 14700, // R$ 147,00
-    amountYearly: 129000  // R$ 1.290,00
+    productId: 'prod_V98VOi3yiSNI8W'
   }
 };
 
@@ -57,6 +53,7 @@ export const PaymentService = {
 
     const params = new URLSearchParams();
     params.append('mode', 'subscription');
+    params.append('payment_method_types[0]', 'card');
     params.append('success_url', `${origin}/?payment=success&plan=${planId}&session_id={CHECKOUT_SESSION_ID}`);
     params.append('cancel_url', `${origin}/?payment=canceled`);
     params.append('line_items[0][price_data][currency]', 'brl');

@@ -22,13 +22,6 @@ export const PitchGeneratorModal: React.FC<Props> = ({ lead, isOpen, onClose }) 
     if (!lead) return;
     setLoading(true);
 
-    const canConsume = consumeAICredit(1);
-    if (!canConsume) {
-      toast.error('Limite diário de créditos de IA atingido');
-      setLoading(false);
-      return;
-    }
-
     try {
       const generated = await GeminiService.generatePitchMessage(lead);
       setPitch(generated);

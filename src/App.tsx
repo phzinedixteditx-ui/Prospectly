@@ -21,15 +21,15 @@ import { PricingPage } from './pages/PricingPage';
 const AppContent: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
   
-  // Check if URL has ?demo=slug query param
+  // Check if URL has ?site=slug, ?p=slug or ?demo=slug query param
   const urlParams = new URLSearchParams(window.location.search);
-  const demoParam = urlParams.get('demo');
+  const siteParam = urlParams.get('site') || urlParams.get('p') || urlParams.get('demo') || (window.location.pathname.startsWith('/site/') ? window.location.pathname.replace('/site/', '') : null);
 
   const [currentPage, setCurrentPage] = useState<string>(
-    demoParam ? 'public-demo' : (isAuthenticated ? 'dashboard' : 'landing')
+    siteParam ? 'public-site' : (isAuthenticated ? 'dashboard' : 'landing')
   );
   const [navigationData, setNavigationData] = useState<any>(
-    demoParam ? { slug: demoParam } : null
+    siteParam ? { slug: siteParam } : null
   );
 
   const navigate = (page: string, data?: any) => {
@@ -38,9 +38,9 @@ const AppContent: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Dedicated full-screen public demo mode
-  if (currentPage === 'public-demo') {
-    return <PublicSitePage slug={navigationData?.slug || demoParam} onNavigate={navigate} />;
+  // Dedicated full-screen public site mode (professional, without "demo" in URL)
+  if (currentPage === 'public-site' || currentPage === 'public-demo') {
+    return <PublicSitePage slug={navigationData?.slug || siteParam} onNavigate={navigate} />;
   }
 
 

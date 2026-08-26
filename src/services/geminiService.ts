@@ -1,6 +1,7 @@
 import { Company, SiteConfig, SiteSection, SiteTheme } from '../types';
 import { getThemeForNiche, DEFAULT_THEMES } from '../data/defaultThemes';
 import { NICHE_CATEGORIES } from '../data/categories';
+import { StorageService } from './storage';
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || atob('QVEuQWI4Uk42S01ZbGNKZUp4dURKNndBZThKR2Fzd2F2ZGNMREhfNmZBSU5LdzJkWG5SOFE=');
 const PRIMARY_MODEL = 'gemini-2.5-flash';
@@ -409,7 +410,8 @@ Notei que muitos novos clientes pesquisam por ${company.category.toLowerCase()} 
       status: 'preview',
       theme,
       sections,
-      publishedUrl: 'https://prospectly.app/demo/' + slug,
+      creatorPlan: StorageService.getUser()?.plan || 'free',
+      publishedUrl: 'https://prospectly-tau.vercel.app/?site=' + slug,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };

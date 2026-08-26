@@ -83,14 +83,10 @@ export const LeadsPage: React.FC<Props> = ({ onNavigate }) => {
   };
 
   const handleCreateDemo = async (lead: Lead) => {
-    const canGenerate = consumeAICredit(3);
-    if (!canGenerate) {
-      toast.error('Créditos de IA insuficientes');
-      return;
-    }
-    toast.info('Gerando demonstração...');
+    toast.info('Criando site do comércio...');
     const site = await GeminiService.generateInitialSite(lead);
     StorageService.saveSite(site);
+    toast.success('Site criado com sucesso!');
     onNavigate('builder', { siteId: site.id, site });
   };
 

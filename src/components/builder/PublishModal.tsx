@@ -18,18 +18,18 @@ export const PublishModal: React.FC<Props> = ({ isOpen, onClose, onOpenPublicDem
   if (!isOpen || !site) return null;
 
   const localOrigin = window.location.origin;
-  const demoUrl = `${localOrigin}/?demo=${site.slug}`;
+  const siteUrl = `${localOrigin}/?site=${site.slug}`;
 
   const cleanPhone = (site.phone || site.whatsapp || '31988887777').replace(/[^0-9]/g, '');
   const formattedPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
   
-  const clientPitchText = `Olá, pessoal do ${site.companyName}! Tudo bem? 👋\n\nCriei uma demonstração interativa exclusiva de como ficaria um site moderno para atrair clientes para vocês:\n\n👉 ${demoUrl}\n\nDê uma olhadinha sem compromisso!`;
+  const clientPitchText = `Olá, pessoal do ${site.companyName}! Tudo bem? 👋\n\nCriei uma demonstração interativa exclusiva de como ficaria um site moderno para atrair clientes para vocês:\n\n👉 ${siteUrl}\n\nDê uma olhadinha sem compromisso!`;
   const whatsappShareUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(clientPitchText)}`;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(demoUrl);
+    navigator.clipboard.writeText(siteUrl);
     setCopied(true);
-    toast.success('Link da demonstração copiado com sucesso!');
+    toast.success('Link do site copiado com sucesso!');
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -63,7 +63,7 @@ export const PublishModal: React.FC<Props> = ({ isOpen, onClose, onOpenPublicDem
           </p>
 
           <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between gap-3">
-            <span className="font-mono text-xs text-blue-400 truncate select-all">{demoUrl}</span>
+            <span className="font-mono text-xs text-blue-400 truncate select-all">{siteUrl}</span>
             <button
               onClick={handleCopy}
               className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white transition-colors shrink-0"

@@ -23,7 +23,7 @@ export const WhatsAppPitchModal: React.FC<Props> = ({ isOpen, onClose, site: pro
 
 
   const localOrigin = window.location.origin;
-  const demoUrl = `${localOrigin}/?demo=${site.slug || site.id}`;
+  const siteUrl = `${localOrigin}/?site=${site.slug || site.id}`;
 
   const cleanPhone = (site.whatsapp || site.phone || '31988887777').replace(/[^0-9]/g, '');
   const formattedPhone = cleanPhone.startsWith('55') ? cleanPhone : (cleanPhone.length >= 10 ? `55${cleanPhone}` : '5531988887777');
@@ -32,11 +32,11 @@ export const WhatsAppPitchModal: React.FC<Props> = ({ isOpen, onClose, site: pro
 
 Estava pesquisando referências de ${site.niche.toLowerCase()} aqui em ${site.city} e vi que vocês têm excelentes avaliações no Google! ⭐ Parabéns de verdade pelo trabalho!
 
-Notei que muitos novos clientes pesquisam pelo celular e querem ver o cardápio/serviços e chamar direto no WhatsApp.
+Notei que muitos novos clientes pesquisam pelo celular e querem ver os serviços/produtos e chamar direto no WhatsApp.
 
-Por isso, montei uma demonstração interativa exclusiva de como ficaria um site moderno e focado em vendas para o ${site.companyName}:
+Por isso, preparei uma apresentação exclusiva de como ficaria um site moderno e focado em vendas para o ${site.companyName}:
 
-👉 ${demoUrl}
+👉 ${siteUrl}
 
 Dá uma olhada de 10 segundos sem nenhum compromisso! O que acharam?`;
 
@@ -67,8 +67,8 @@ Dá uma olhada de 10 segundos sem nenhum compromisso! O que acharam?`;
       };
       const newPitch = await GeminiService.generatePitchMessage(companyMock);
       if (newPitch) {
-        setMessage(`${newPitch}\n\n👉 Demonstração interativa: ${demoUrl}`);
-        toast.success('Nova mensagem gerada pela IA!');
+        setMessage(`${newPitch}\n\n👉 Apresentação exclusiva: ${siteUrl}`);
+        toast.success('Nova mensagem gerada com sucesso!');
       }
     } catch {
       toast.error('Erro ao gerar nova mensagem');

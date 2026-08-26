@@ -51,9 +51,9 @@ export const ProjectsPage: React.FC<Props> = ({ onNavigate }) => {
   };
 
   const handleCopyLink = (project: SiteConfig) => {
-    const demoUrl = `${window.location.origin}/?demo=${project.slug || project.id}`;
-    navigator.clipboard.writeText(demoUrl);
-    toast.success('Link da demonstração copiado para a área de transferência!');
+    const siteUrl = `${window.location.origin}/?site=${project.slug || project.id}`;
+    navigator.clipboard.writeText(siteUrl);
+    toast.success('Link do site copiado para a área de transferência!');
   };
 
   const niches = ['all', ...Array.from(new Set(projects.map(p => p.niche || 'Geral')))];

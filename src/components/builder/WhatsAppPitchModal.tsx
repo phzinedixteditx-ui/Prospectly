@@ -40,13 +40,28 @@ Por isso, preparei uma apresentação exclusiva de como ficaria um site moderno 
 
 Dá uma olhada de 10 segundos sem nenhum compromisso! O que acharam?`;
 
-  const [message, setMessage] = useState(defaultPitch);
+  const getProcessedPitch = (raw: string) => {
+    return raw
+      .replace(/{nome_empresa}/g, site.companyName)
+      .replace(/{cidade}/g, site.city)
+      .replace(/{nicho}/g, site.niche)
+      .replace(/{link_site}/g, siteUrl)
+      .replace(/{telefone}/g, site.phone || '(31) 98888-7777');
+  };
+
+  const initialPitch = site.customWhatsAppPitch ? getProcessedPitch(site.customWhatsAppPitch) : defaultPitch;
+  const [message, setMessage] = useState(initialPitch);
 
   const handleCopyMessage = () => {
     navigator.clipboard.writeText(message);
     setCopied(true);
     toast.success('Mensagem de abordagem copiada!');
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSaveAsDefault = () => {
+    builderContext?.updateSiteInfo({ customWhatsAppPitch: message });
+    toast.success('Script salvo como padrão para este site!');
   };
 
   const handleRegeneratePitch = async () => {
@@ -138,6 +153,15 @@ Dá uma olhada de 10 segundos sem nenhum compromisso! O que acharam?`;
         {/* Actions */}
         <div className="flex flex-col sm:flex-row items-center gap-2 pt-2 border-t border-zinc-800">
           <button
+            onClick={handleSaveAsDefault}
+            className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-all cursor-pointer"
+            title="Salvar esta mensagem como padrão para este site"
+          >
+            <Check className="w-3.5 h-3.5" />
+            <span>Salvar Script</span>
+          </button>
+
+          <button
             onClick={handleCopyMessage}
             className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-semibold text-zinc-300 hover:text-white transition-all cursor-pointer"
           >
@@ -153,7 +177,7 @@ Dá uma olhada de 10 segundos sem nenhum compromisso! O que acharam?`;
             className="w-full sm:flex-1 flex items-center justify-center gap-2 text-xs font-bold text-zinc-950 bg-emerald-400 hover:bg-emerald-300 py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:scale-102 cursor-pointer"
           >
             <Send className="w-3.5 h-3.5" />
-            Abrir WhatsApp e Enviar
+            <span>Abrir WhatsApp e Enviar</span>
           </a>
         </div>
       </div>

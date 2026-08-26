@@ -31,7 +31,12 @@ import {
   ChevronRight,
   PlusCircle,
   Building2,
-  Image as ImageIcon
+  Image as ImageIcon,
+  MessageSquare,
+  Send,
+  Copy,
+  ExternalLink,
+  Share2
 } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 
@@ -435,13 +440,29 @@ export const DesignStudioPanel: React.FC = () => {
     addSection,
     removeSection,
     undoLastChange, 
-    canUndo 
+    canUndo
   } = useBuilder();
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'content' | 'presets' | 'layout' | 'colors' | 'fonts' | 'effects' | 'sections'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'whatsapp' | 'presets' | 'layout' | 'colors' | 'fonts' | 'effects' | 'sections'>('content');
   const [expandedSection, setExpandedSection] = useState<string | null>('general_info');
   const [proModalOpen, setProModalOpen] = useState<{ open: boolean; featureName: string }>({ open: false, featureName: '' });
   const toast = useToast();
+
+  const defaultWhatsAppPitch = `Olá, equipe do {nome_empresa}! Tudo bem? 👋
+
+Estava pesquisando referências de {nicho} aqui em {cidade} e vi que vocês têm excelentes avaliações no Google! ⭐ Parabéns de verdade pelo trabalho!
+
+Notei que muitos novos clientes pesquisam pelo celular e querem ver os serviços/produtos e chamar direto no WhatsApp.
+
+Por isso, preparei uma apresentação exclusiva de como ficaria um site moderno e focado em vendas para o {nome_empresa}:
+
+👉 {link_site}
+
+Dá uma olhada de 10 segundos sem nenhum compromisso! O que acharam?`;
+
+  const [whatsappPitch, setWhatsappPitch] = useState(site?.customWhatsAppPitch || defaultWhatsAppPitch);
+  const [leadButtonMessage, setLeadButtonMessage] = useState(site?.customLeadWhatsAppMessage || 'Olá! Vi o site de vocês e gostaria de mais informações / fazer um pedido.');
+  const [whatsappPhone, setWhatsappPhone] = useState(site?.whatsapp || site?.phone || '');
 
   if (!site) return null;
 
@@ -599,128 +620,146 @@ export const DesignStudioPanel: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-zinc-950 border-l border-zinc-800/80 w-80 lg:w-[440px] shrink-0 text-zinc-100 font-sans select-none shadow-2xl">
+    <div className="flex flex-col h-full bg-zinc-950 border-l border-zinc-800/90 w-full sm:w-96 md:w-[480px] lg:w-[520px] shrink-0 text-zinc-100 font-sans select-none shadow-2xl overflow-hidden">
       {/* Studio Header */}
-      <div className="p-4 border-b border-zinc-800/80 bg-zinc-900/80 backdrop-blur-md flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 via-emerald-400 to-indigo-500 p-[1px] shadow-lg shadow-emerald-500/20">
-            <div className="w-full h-full bg-zinc-950 rounded-[11px] flex items-center justify-center">
+      <div className="p-4 sm:p-5 border-b border-zinc-800/90 bg-zinc-900/90 backdrop-blur-md flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-amber-400 via-emerald-400 to-indigo-500 p-[1.5px] shadow-lg shadow-emerald-500/20 shrink-0">
+            <div className="w-full h-full bg-zinc-950 rounded-[14px] flex items-center justify-center">
               <Sliders className="w-4 h-4 text-amber-400" />
             </div>
           </div>
           <div>
-            <h3 className="font-extrabold text-xs text-white flex items-center gap-1.5">
+            <h3 className="font-black text-sm text-white flex items-center gap-2">
               <span>Design Studio PRO</span>
-              <span className="text-[10px] bg-amber-950 text-amber-400 px-1.5 py-0.5 rounded font-black border border-amber-800/60 flex items-center gap-0.5">
-                <Crown className="w-2.5 h-2.5" />
+              <span className="text-[10px] bg-amber-950 text-amber-400 px-2 py-0.5 rounded-full font-black border border-amber-800/60 flex items-center gap-1">
+                <Crown className="w-3 h-3" />
                 PREMIUM
               </span>
             </h3>
-            <p className="text-[10px] text-zinc-400">Edição de Textos, Elementos & Estilo</p>
+            <p className="text-[11px] text-zinc-400">Edição de Textos, WhatsApp & Identidade Visual</p>
           </div>
         </div>
 
         {canUndo && (
           <button
             onClick={undoLastChange}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-[11px] font-bold text-zinc-300 hover:text-white transition-all cursor-pointer active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-bold text-zinc-300 hover:text-white transition-all cursor-pointer active:scale-95 shadow-sm shrink-0"
             title="Desfazer alteração"
           >
-            <RotateCcw className="w-3 h-3" />
+            <RotateCcw className="w-3.5 h-3.5" />
             <span>Desfazer</span>
           </button>
         )}
       </div>
 
-      {/* Main Tab Bar */}
-      <div className="flex items-center border-b border-zinc-800/80 bg-zinc-900/40 p-1.5 gap-1 overflow-x-auto text-xs scrollbar-none">
-        <button
-          onClick={() => setActiveTab('content')}
-          className={`py-2 px-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
-            activeTab === 'content'
-              ? 'bg-emerald-400 text-zinc-950 shadow-md font-black'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
-          }`}
-        >
-          <Edit3 className="w-3.5 h-3.5" />
-          <span>Conteúdo</span>
-        </button>
+      {/* Main Tab Bar - 2-Tier Structured Segmented Control */}
+      <div className="border-b border-zinc-800/90 bg-zinc-900/40 p-2 space-y-1.5 shrink-0">
+        {/* Tier 1: Main Core Tabs */}
+        <div className="grid grid-cols-3 gap-1.5">
+          <button
+            onClick={() => setActiveTab('content')}
+            className={`py-2.5 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              activeTab === 'content'
+                ? 'bg-emerald-400 text-zinc-950 shadow-md shadow-emerald-500/20'
+                : 'bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800/80 border border-zinc-800/60'
+            }`}
+          >
+            <Edit3 className="w-4 h-4 shrink-0" />
+            <span>Conteúdo</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('presets')}
-          className={`py-2 px-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
-            activeTab === 'presets'
-              ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
-          }`}
-        >
-          <Crown className="w-3.5 h-3.5 text-amber-400" />
-          <span>Temas ({PRESET_THEMES.length})</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('whatsapp')}
+            className={`py-2.5 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
+              activeTab === 'whatsapp'
+                ? 'bg-emerald-500 text-zinc-950 shadow-md shadow-emerald-500/20'
+                : 'bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800/80 border border-zinc-800/60'
+            }`}
+          >
+            <MessageSquare className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>WhatsApp</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('layout')}
-          className={`py-2 px-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
-            activeTab === 'layout'
-              ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
-          }`}
-        >
-          <Layout className="w-3.5 h-3.5 text-sky-400" />
-          <span>Layout</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('presets')}
+            className={`py-2.5 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+              activeTab === 'presets'
+                ? 'bg-zinc-100 text-zinc-950 shadow-md'
+                : 'bg-zinc-900/80 text-zinc-400 hover:text-white hover:bg-zinc-800/80 border border-zinc-800/60'
+            }`}
+          >
+            <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span>Temas ({PRESET_THEMES.length})</span>
+          </button>
+        </div>
 
-        <button
-          onClick={() => setActiveTab('colors')}
-          className={`py-2 px-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
-            activeTab === 'colors'
-              ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
-          }`}
-        >
-          <Palette className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Cores</span>
-        </button>
+        {/* Tier 2: Visual Styling Tabs */}
+        <div className="grid grid-cols-5 gap-1 pt-0.5">
+          <button
+            onClick={() => setActiveTab('layout')}
+            className={`py-1.5 px-2 rounded-lg font-bold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer ${
+              activeTab === 'layout'
+                ? 'bg-zinc-800 text-white border border-zinc-700 shadow-sm'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+            }`}
+          >
+            <Layout className="w-3 h-3 text-sky-400 shrink-0" />
+            <span>Layout</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('fonts')}
-          className={`py-2 px-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
-            activeTab === 'fonts'
-              ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
-          }`}
-        >
-          <Type className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Fontes</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('colors')}
+            className={`py-1.5 px-2 rounded-lg font-bold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer ${
+              activeTab === 'colors'
+                ? 'bg-zinc-800 text-white border border-zinc-700 shadow-sm'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+            }`}
+          >
+            <Palette className="w-3 h-3 text-emerald-400 shrink-0" />
+            <span>Cores</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('effects')}
-          className={`py-2 px-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
-            activeTab === 'effects'
-              ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
-          }`}
-        >
-          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-          <span>Efeitos</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('fonts')}
+            className={`py-1.5 px-2 rounded-lg font-bold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer ${
+              activeTab === 'fonts'
+                ? 'bg-zinc-800 text-white border border-zinc-700 shadow-sm'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+            }`}
+          >
+            <Type className="w-3 h-3 text-indigo-400 shrink-0" />
+            <span>Fontes</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab('sections')}
-          className={`py-2 px-2.5 rounded-xl font-extrabold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
-            activeTab === 'sections'
-              ? 'bg-zinc-100 text-zinc-950 shadow-sm'
-              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
-          }`}
-        >
-          <Layers className="w-3.5 h-3.5 text-amber-400" />
-          <span>Seções</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('effects')}
+            className={`py-1.5 px-2 rounded-lg font-bold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer ${
+              activeTab === 'effects'
+                ? 'bg-zinc-800 text-white border border-zinc-700 shadow-sm'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+            }`}
+          >
+            <Sparkles className="w-3 h-3 text-purple-400 shrink-0" />
+            <span>Efeitos</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('sections')}
+            className={`py-1.5 px-2 rounded-lg font-bold text-[11px] transition-all flex items-center justify-center gap-1 cursor-pointer ${
+              activeTab === 'sections'
+                ? 'bg-zinc-800 text-white border border-zinc-700 shadow-sm'
+                : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+            }`}
+          >
+            <Layers className="w-3 h-3 text-amber-400 shrink-0" />
+            <span>Seções</span>
+          </button>
+        </div>
       </div>
 
       {/* Tab Content Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-6">
 
         {/* TAB 0: CONTEÚDO & EDITOR DE TEXTOS / ELEMENTOS */}
         {activeTab === 'content' && (
@@ -1122,6 +1161,236 @@ export const DesignStudioPanel: React.FC = () => {
                 >
                   <PlusCircle className="w-3.5 h-3.5 text-purple-400" />
                   <span>Dúvidas Frequentes (FAQ)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB WHATSAPP: CONFIGURAÇÃO DE ABORDAGEM & PROMPT WHATSAPP */}
+        {activeTab === 'whatsapp' && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="border-b border-zinc-800/80 pb-3">
+              <h4 className="text-sm font-black text-white flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-emerald-400" />
+                <span>Prompt & Mensagens do WhatsApp</span>
+              </h4>
+              <p className="text-xs text-zinc-400 mt-1">
+                Personalize o script de abordagem enviado ao proprietário e o botão de atendimento do site.
+              </p>
+            </div>
+
+            {/* CARD 1: SCRIPT DE ABORDAGEM (PROMPT DE ENVIO PARA O DONO) */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-zinc-900/90 border border-zinc-800/90 space-y-4 shadow-xl">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 shadow-sm">
+                  <Send className="w-4 h-4" />
+                </div>
+                <div>
+                  <h5 className="font-extrabold text-sm text-white">Prompt de Abordagem do Site</h5>
+                  <p className="text-xs text-zinc-400">Mensagem que você envia no WhatsApp do proprietário</p>
+                </div>
+              </div>
+
+              {/* Dynamic Variables Tags */}
+              <div className="space-y-2 pt-1">
+                <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
+                  Tags Dinâmicas (Clique para inserir no texto):
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { tag: '{nome_empresa}', label: 'Empresa' },
+                    { tag: '{cidade}', label: 'Cidade' },
+                    { tag: '{nicho}', label: 'Nicho' },
+                    { tag: '{link_site}', label: 'Link' },
+                    { tag: '{telefone}', label: 'Telefone' }
+                  ].map(v => (
+                    <button
+                      key={v.tag}
+                      type="button"
+                      onClick={() => setWhatsappPitch(prev => prev + ' ' + v.tag)}
+                      className="px-2.5 py-1.5 rounded-xl bg-zinc-950 hover:bg-zinc-800 border border-zinc-800 text-[11px] text-emerald-400 font-mono font-bold transition-all cursor-pointer active:scale-95 shadow-sm"
+                      title={`Inserir ${v.label}`}
+                    >
+                      + {v.tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Textarea */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-zinc-300">Texto do Script / Mensagem:</label>
+                <textarea
+                  value={whatsappPitch}
+                  onChange={(e) => setWhatsappPitch(e.target.value)}
+                  rows={9}
+                  className="w-full p-4 rounded-2xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500 font-sans leading-relaxed resize-none shadow-inner"
+                  placeholder="Escreva a mensagem personalizada..."
+                />
+              </div>
+
+              {/* Preset Pitch Quick Selectors */}
+              <div className="space-y-2.5 pt-1">
+                <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
+                  Modelos Prontos de Alta Conversão:
+                </span>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => setWhatsappPitch(`Olá, equipe do {nome_empresa}! Tudo bem? 👋\n\nEstava pesquisando referências de {nicho} aqui em {cidade} e vi a excelente reputação de vocês no Google! ⭐\n\nPreparei uma demonstração exclusiva de como ficaria um site moderno e focado em vendas para vocês:\n\n👉 {link_site}\n\nDê uma olhadinha sem compromisso! O que acharam?`)}
+                    className="w-full p-3 rounded-2xl bg-zinc-950 hover:bg-zinc-800/90 border border-zinc-800/90 text-left transition-all cursor-pointer active:scale-98 shadow-sm flex items-center justify-between group"
+                  >
+                    <div>
+                      <span className="font-bold text-emerald-400 text-xs block group-hover:text-emerald-300">1. Apresentação & Elogio Google</span>
+                      <span className="text-[11px] text-zinc-400">Direto, amigável e focado em autoridade</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-zinc-500 bg-zinc-900 px-2 py-1 rounded-lg border border-zinc-800">Usar</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setWhatsappPitch(`Oi, tudo bem? Notei que muitos clientes pesquisam por {nicho} em {cidade} no Google Maps mas acabam não achando site oficial da {nome_empresa}.\n\nPara vocês não perderem mais essas vendas, montei o site completo pronto para colocar no ar:\n\n👉 {link_site}\n\nPodemos fechar a ativação hoje?`)}
+                    className="w-full p-3 rounded-2xl bg-zinc-950 hover:bg-zinc-800/90 border border-zinc-800/90 text-left transition-all cursor-pointer active:scale-98 shadow-sm flex items-center justify-between group"
+                  >
+                    <div>
+                      <span className="font-bold text-amber-400 text-xs block group-hover:text-amber-300">2. Focado em Perda de Clientes</span>
+                      <span className="text-[11px] text-zinc-400">Gera urgência de fechar com quem pesquisa no Maps</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-zinc-500 bg-zinc-900 px-2 py-1 rounded-lg border border-zinc-800">Usar</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setWhatsappPitch(`Olá! Conseguimos liberar uma condição promocional especial para a {nome_empresa} com domínio próprio e segurança SSL grátis no primeiro ano:\n\n👉 Veja o site pré-configurado: {link_site}\n\nEssa condição é válida para aprovação até amanhã às 18h. O que acha?`)}
+                    className="w-full p-3 rounded-2xl bg-zinc-950 hover:bg-zinc-800/90 border border-zinc-800/90 text-left transition-all cursor-pointer active:scale-98 shadow-sm flex items-center justify-between group"
+                  >
+                    <div>
+                      <span className="font-bold text-purple-400 text-xs block group-hover:text-purple-300">3. Oferta Especial com Domínio Grátis</span>
+                      <span className="text-[11px] text-zinc-400">Bônus exclusivo com prazo de 24 horas</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-zinc-500 bg-zinc-900 px-2 py-1 rounded-lg border border-zinc-800">Usar</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2.5 pt-3 border-t border-zinc-800/90">
+                <button
+                  type="button"
+                  onClick={() => {
+                    updateSiteInfo({ customWhatsAppPitch: whatsappPitch });
+                    toast.success('Prompt de abordagem do WhatsApp salvo com sucesso!');
+                  }}
+                  className="w-full py-3.5 px-4 rounded-2xl bg-emerald-400 hover:bg-emerald-300 text-zinc-950 font-black text-xs transition-all shadow-lg shadow-emerald-500/20 active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <Check className="w-4 h-4 stroke-[3]" />
+                  <span>Salvar Prompt como Padrão</span>
+                </button>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const processed = whatsappPitch
+                        .replace(/{nome_empresa}/g, site.companyName)
+                        .replace(/{cidade}/g, site.city)
+                        .replace(/{nicho}/g, site.niche)
+                        .replace(/{link_site}/g, `${window.location.origin}/?site=${site.slug || site.id}`)
+                        .replace(/{telefone}/g, site.phone || '(31) 98888-7777');
+                      navigator.clipboard.writeText(processed);
+                      toast.success('Mensagem processada copiada!');
+                    }}
+                    className="py-3 px-3 rounded-2xl bg-zinc-950 hover:bg-zinc-800 text-zinc-200 font-bold text-xs transition-all border border-zinc-800 active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
+                  >
+                    <Copy className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>Copiar Texto</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const processed = whatsappPitch
+                        .replace(/{nome_empresa}/g, site.companyName)
+                        .replace(/{cidade}/g, site.city)
+                        .replace(/{nicho}/g, site.niche)
+                        .replace(/{link_site}/g, `${window.location.origin}/?site=${site.slug || site.id}`)
+                        .replace(/{telefone}/g, site.phone || '(31) 98888-7777');
+                      const clean = (site.whatsapp || site.phone || '31988887777').replace(/[^0-9]/g, '');
+                      const phoneFormatted = clean.startsWith('55') ? clean : `55${clean}`;
+                      window.open(`https://wa.me/${phoneFormatted}?text=${encodeURIComponent(processed)}`, '_blank');
+                    }}
+                    className="py-3 px-3 rounded-2xl bg-green-600 hover:bg-green-500 text-white font-bold text-xs transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 shadow-sm shadow-green-600/20"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>Testar no WhatsApp</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* CARD 2: BOTÃO DE WHATSAPP DO PRÓPRIO SITE (CLIENTES ➔ COMÉRCIO) */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-zinc-900/90 border border-zinc-800/90 space-y-4 shadow-xl">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-2xl bg-green-500/20 border border-green-500/30 flex items-center justify-center text-green-400 shrink-0 shadow-sm">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <div>
+                  <h5 className="font-extrabold text-sm text-white">Botão de WhatsApp do Site</h5>
+                  <p className="text-xs text-zinc-400">Configuração do botão onde os clientes chamam o comércio</p>
+                </div>
+              </div>
+
+              <div className="space-y-3.5 text-xs">
+                <div>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1.5">WhatsApp de Atendimento do Comércio:</label>
+                  <input
+                    type="text"
+                    value={whatsappPhone}
+                    onChange={(e) => setWhatsappPhone(e.target.value)}
+                    placeholder="(31) 99999-9999"
+                    className="w-full p-3 rounded-2xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500 font-semibold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1.5">Mensagem Pré-preenchida do Botão:</label>
+                  <input
+                    type="text"
+                    value={leadButtonMessage}
+                    onChange={(e) => setLeadButtonMessage(e.target.value)}
+                    placeholder="Olá! Vi o site de vocês e gostaria de fazer um pedido..."
+                    className="w-full p-3 rounded-2xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500 font-semibold"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const clean = whatsappPhone.replace(/[^0-9]/g, '');
+                    const phoneFormatted = clean.startsWith('55') ? clean : `55${clean}`;
+                    const waUrl = `https://wa.me/${phoneFormatted}?text=${encodeURIComponent(leadButtonMessage)}`;
+                    
+                    // Update contact section and hero section buttons
+                    const updatedSections = site.sections.map(sec => {
+                      if (sec.type === 'contact' || sec.type === 'hero') {
+                        return { ...sec, buttonLink: waUrl };
+                      }
+                      return sec;
+                    });
+
+                    updateSiteInfo({
+                      whatsapp: whatsappPhone,
+                      phone: whatsappPhone,
+                      customLeadWhatsAppMessage: leadButtonMessage,
+                      sections: updatedSections
+                    });
+                    toast.success('Botão de WhatsApp do site atualizado com sucesso!');
+                  }}
+                  className="w-full py-3.5 px-4 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-white font-black text-xs transition-all border border-zinc-700 active:scale-95 cursor-pointer flex items-center justify-center gap-2 shadow-md"
+                >
+                  <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
+                  <span>Salvar Botão de Atendimento</span>
                 </button>
               </div>
             </div>

@@ -214,6 +214,8 @@ export interface SiteConfig {
   sections: SiteSection[];
   publishedUrl?: string;
   creatorPlan?: PlanType;
+  customWhatsAppPitch?: string;
+  customLeadWhatsAppMessage?: string;
   createdAt: string;
   updatedAt: string;
 }

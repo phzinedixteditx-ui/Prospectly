@@ -8,8 +8,8 @@ interface Props {
 }
 
 export const GoogleAuthModal: React.FC<Props> = ({ isOpen, onClose, onSuccess }) => {
-  const [email, setEmail] = useState('phzinedixteditx@gmail.com');
-  const [name, setName] = useState('Matheus Felipe');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [showConfig, setShowConfig] = useState(false);
   const [clientId, setClientId] = useState(localStorage.getItem('prospectly_google_client_id') || '');
 
@@ -17,14 +17,13 @@ export const GoogleAuthModal: React.FC<Props> = ({ isOpen, onClose, onSuccess })
 
   const handleQuickLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email.trim()) return;
 
-    const initials = name ? name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'G';
     const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || email)}&background=0D8ABC&color=fff&size=200`;
 
     onSuccess({
-      name: name || email.split('@')[0],
-      email,
+      name: name.trim() || email.split('@')[0],
+      email: email.trim(),
       avatar
     });
     onClose();

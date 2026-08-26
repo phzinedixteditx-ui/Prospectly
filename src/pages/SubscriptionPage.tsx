@@ -27,12 +27,12 @@ export const SubscriptionPage: React.FC<Props> = ({ onNavigate }) => {
   const handleUpgrade = async (planId: PlanType) => {
     if (!user) return;
     setLoading(true);
-    const res = await PaymentService.createCheckout(planId, user);
+    const res = await PaymentService.createCheckout(planId, user, billingCycle);
     setLoading(false);
-    if (res.success) {
-      changePlan(planId);
+    if (res.success && planId === 'free') {
+      changePlan('free');
       toast.success(res.message);
-    } else {
+    } else if (!res.success) {
       toast.error(res.message);
     }
   };

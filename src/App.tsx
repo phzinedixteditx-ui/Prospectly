@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LeadsProvider } from './context/LeadsContext';
 import { BuilderProvider } from './context/BuilderContext';
-import { ToastProvider } from './context/ToastContext';
+import { ToastProvider, useToast } from './context/ToastContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { LandingPage } from './pages/LandingPage';
@@ -19,7 +19,8 @@ import { SubscriptionPage } from './pages/SubscriptionPage';
 import { PricingPage } from './pages/PricingPage';
 
 const AppContent: React.FC = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, changePlan } = useAuth();
+  const toast = useToast();
   
   // Check if URL has ?site=slug, ?p=slug or ?demo=slug query param
   const urlParams = new URLSearchParams(window.location.search);
@@ -31,6 +32,21 @@ const AppContent: React.FC = () => {
   const [navigationData, setNavigationData] = useState<any>(
     siteParam ? { slug: siteParam } : null
   );
+
+  useEffect(() => {
+    const paymentStatus = urlParams.get('payment');
+    const planParam = urlParams.get('plan') as any;
+
+    if (paymentStatus === 'success' && planParam) {
+      changePlan(planParam);
+      toast.success(`🎉 Pagamento confirmado na Stripe! Seu plano ${planParam.toUpperCase()} foi ativado com sucesso.`);
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setCurrentPage('dashboard');
+    } else if (paymentStatus === 'canceled') {
+      toast.info('Checkout na Stripe cancelado.');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   const navigate = (page: string, data?: any) => {
     setCurrentPage(page);

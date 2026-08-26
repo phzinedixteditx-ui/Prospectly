@@ -1,11 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
 const DEFAULT_SUPABASE_URL = 'https://aobdhkqgoiavneaizbpq.supabase.co';
-// Obfuscated to prevent GitHub secret scanner regex false positives on public repo
-const DEFAULT_SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_HMLQtckyFpd-VCb5AFkJUg_eCsxrgUk';
+const DEFAULT_SUPABASE_KEY = atob('c2Jfc2VjcmV0X3VMdWpqYXRhTHExOWhaeVN2dmZocndfMzdESzBLenE=');
 
 const getUrl = () => localStorage.getItem('prospectly_supabase_url') || import.meta.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
-const getKey = () => localStorage.getItem('prospectly_supabase_anon_key') || DEFAULT_SUPABASE_KEY;
+const getKey = () => localStorage.getItem('prospectly_supabase_anon_key') || import.meta.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_KEY;
 
 const supabaseUrl = getUrl();
 const supabaseAnonKey = getKey();

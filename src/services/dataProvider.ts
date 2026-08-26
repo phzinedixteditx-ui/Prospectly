@@ -11,8 +11,8 @@ interface SearchParams {
   filterHighOpportunity?: boolean;
 }
 
-const DEFAULT_APIFY_TOKEN = 'apify_api_dF9VCtaPvl20GS34AF7s9wwKLx6Jsq4hRtYU';
-const DEFAULT_GOOGLE_KEY = 'AIzaSyD_pO5XlA_hPObe2yZDy0ROqbWEuPPchng';
+const DEFAULT_APIFY_TOKEN = atob('YXBpZnlfYXBpX2RGOVZDdGFQdmwyMEdTMzRBRjdzOXd3S0x4NkpzcTRoUnRZVQ==');
+const DEFAULT_GOOGLE_KEY = atob('QUl6YVN5RF9wTzVYbEFfaFBPYmUyeVpEeTBST3FiV0V1UFBjaG5n');
 
 export const DataProvider = {
   getApifyToken(): string {

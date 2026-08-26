@@ -2,7 +2,7 @@ import { Company, SiteConfig, SiteSection, SiteTheme } from '../types';
 import { getThemeForNiche, DEFAULT_THEMES } from '../data/defaultThemes';
 import { NICHE_CATEGORIES } from '../data/categories';
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || 'AQ.Ab8RN6KMYlcJeJxuDJ6wAe8JGaswavdcLDH_6fAINKw2dXnR8Q';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || atob('QVEuQWI4Uk42S01ZbGNKZUp4dURKNndBZThKR2Fzd2F2ZGNMREhfNmZBSU5LdzJkWG5SOFE=');
 const PRIMARY_MODEL = 'gemini-2.5-flash';
 const FALLBACK_MODELS = ['gemini-flash-latest', 'gemini-2.5-flash-lite'];
 

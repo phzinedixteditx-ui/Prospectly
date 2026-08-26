@@ -1,113 +1,253 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { ProspectlyLogo } from '../components/common/ProspectlyLogo';
 import { LightBeamBackground } from '../components/common/LightBeamBackground';
-import { GoogleAuthModal } from '../components/common/GoogleAuthModal';
-import { Sparkles, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Sparkles, ShieldCheck, CheckCircle2, Mail, User as UserIcon } from 'lucide-react';
 
 interface Props {
   onNavigate: (page: string) => void;
 }
 
+const GOOGLE_CLIENT_ID = '327866267075-k63apeda2ie4bk82ffof8iljs0ns0jmb.apps.googleusercontent.com';
+
 export const RegisterPage: React.FC<Props> = ({ onNavigate }) => {
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [showGoogleModal, setShowGoogleModal] = useState(false);
+  const googleBtnRef = useRef<HTMLDivElement>(null);
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
   const { loginWithGoogle } = useAuth();
   const toast = useToast();
 
-  const handleGoogleRegister = () => {
-    setShowGoogleModal(true);
+  const handleCredentialResponse = async (response: any) => {
+    if (!response.credential) return;
+
+    setLoading(true);
+    try {
+      const base64Url = response.credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map((c: string) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      const payload = JSON.parse(jsonPayload);
+
+      if (payload && payload.email) {
+        await loginWithGoogle({
+          name: payload.name || payload.given_name || 'Usuário Google',
+          email: payload.email,
+          avatar: payload.picture
+        });
+
+        toast.success(`Conta criada com sucesso! Bem-vindo, ${payload.name || payload.email}.`);
+        onNavigate('dashboard');
+      }
+    } catch (err) {
+      console.error('Google sign-in error:', err);
+      toast.error('Erro ao conectar conta Google.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleGoogleSuccess = async (profile: { name: string; email: string; avatar: string }) => {
+  const handleGoogleOAuthPopup = () => {
+    if (window.google?.accounts?.oauth2) {
+      const client = window.google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: 'email profile openid',
+        callback: async (tokenResponse: any) => {
+          if (tokenResponse.access_token) {
+            try {
+              setLoading(true);
+              const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+              });
+              if (res.ok) {
+                const user = await res.json();
+                await loginWithGoogle({
+                  name: user.name || user.given_name || 'Usuário Google',
+                  email: user.email,
+                  avatar: user.picture
+                });
+                toast.success(`Conta criada com sucesso! Bem-vindo, ${user.name || user.email}.`);
+                onNavigate('dashboard');
+              }
+            } catch (e) {
+              console.error('Error fetching Google profile:', e);
+            } finally {
+              setLoading(false);
+            }
+          }
+        }
+      });
+      client.requestAccessToken({ prompt: 'select_account' });
+    } else {
+      toast.info('Carregando autenticador Google...');
+    }
+  };
+
+  useEffect(() => {
+    const initGsi = () => {
+      if (window.google?.accounts?.id && googleBtnRef.current) {
+        try {
+          window.google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleCredentialResponse,
+            auto_select: false,
+            cancel_on_tap_outside: true
+          });
+
+          window.google.accounts.id.renderButton(googleBtnRef.current, {
+            theme: 'filled_black',
+            size: 'large',
+            type: 'standard',
+            shape: 'pill',
+            text: 'signup_with',
+            width: 320,
+            logo_alignment: 'left'
+          });
+        } catch (e) {
+          console.warn('GSI render error:', e);
+        }
+      }
+    };
+
+    if (window.google?.accounts?.id) {
+      initGsi();
+    } else {
+      const interval = setInterval(() => {
+        if (window.google?.accounts?.id) {
+          clearInterval(interval);
+          initGsi();
+        }
+      }, 200);
+      return () => clearInterval(interval);
+    }
+  }, []);
+
+  const handleManualRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+
+    setLoading(true);
     try {
-      await loginWithGoogle(profile);
-      toast.success(`Conta criada e vinculada com o Google (${profile.email})!`);
+      const cleanEmail = email.trim();
+      const cleanName = name.trim() || cleanEmail.split('@')[0];
+      const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanName)}&background=0D8ABC&color=fff&size=200`;
+
+      await loginWithGoogle({
+        name: cleanName,
+        email: cleanEmail,
+        avatar
+      });
+
+      toast.success(`Conta criada com sucesso! Bem-vindo, ${cleanName}.`);
       onNavigate('dashboard');
     } catch {
-      toast.error('Não foi possível conectar com o Google.');
+      toast.error('Não foi possível criar a conta.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="relative min-h-[90vh] flex flex-col items-center justify-center px-4 py-12 overflow-hidden">
-      {/* Radiant Prismatic Chromatic Light Beam in Background */}
       <LightBeamBackground opacity={0.95} />
 
-      {/* Main Luxury Hero Title */}
       <div className="relative z-10 text-center max-w-2xl mx-auto mb-8 space-y-3 animate-slide-up">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900/80 border border-white/10 text-zinc-300 text-xs font-semibold backdrop-blur-md">
           <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          Cadastro Gratuito em 1 Clique
+          Cadastro Gratuito Oficial Google
         </div>
         <h1 className="text-4xl sm:text-5xl font-serif tracking-tight text-white font-medium drop-shadow-2xl">
           Create & Convert.
         </h1>
         <p className="text-xs sm:text-sm text-zinc-300/80 max-w-md mx-auto leading-relaxed">
-          Crie sua conta oficial em segundos e comece a encontrar clientes reais em qualquer cidade do Brasil.
+          Cadastre-se com seu Google oficial em 1 clique para liberar suas buscas no Google Maps.
         </p>
       </div>
 
-      {/* Center Auth Card with Glowing Border Beam */}
       <div className="relative z-10 w-full max-w-md p-8 rounded-3xl border-beam-card space-y-6 animate-slide-up text-center">
         <div className="flex flex-col items-center space-y-2">
           <ProspectlyLogo size="md" showText={false} />
           <h2 className="text-xl font-bold text-white tracking-tight">Criar Conta Oficial</h2>
-          <p className="text-xs text-zinc-400">Cadastre-se com seu Google oficial para liberar seus créditos</p>
+          <p className="text-xs text-zinc-400">Cadastre-se com sua conta Google oficial em 1 clique</p>
         </div>
 
-        {/* Google One-Click Register Button */}
-        <div className="space-y-4 pt-2">
+        {/* Official Google GIS Button Rendered */}
+        <div className="pt-2 flex flex-col items-center space-y-3">
+          <div ref={googleBtnRef} className="flex justify-center w-full min-h-[44px]" />
+
+          {/* Fallback One-Click Google OAuth Popup Button */}
           <button
             type="button"
-            onClick={handleGoogleRegister}
-            disabled={googleLoading}
-            className="w-full py-4 px-5 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-950 text-sm font-extrabold shadow-2xl shadow-black/60 flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer disabled:opacity-75"
+            onClick={handleGoogleOAuthPopup}
+            disabled={loading}
+            className="w-full py-3.5 px-5 rounded-full bg-white hover:bg-zinc-100 text-zinc-950 text-xs font-extrabold shadow-xl flex items-center justify-center gap-2.5 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer disabled:opacity-75"
           >
-            {/* Google Icon SVG */}
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
-              <path
-                fill="#EA4335"
-                d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"
-              />
-              <path
-                fill="#4285F4"
-                d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.8 0 12s.7 3.3 1.9 5.7l3.7-2.9z"
-              />
-              <path
-                fill="#34A853"
-                d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"
-              />
+            <svg className="w-4 h-4" viewBox="0 0 24 24">
+              <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z" />
+              <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z" />
+              <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.8 0 12s.7 3.3 1.9 5.7l3.7-2.9z" />
+              <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z" />
             </svg>
-            <span>{googleLoading ? 'Conectando ao Google...' : 'Cadastrar com o Google'}</span>
+            <span>{loading ? 'Abrindo autenticação Google...' : 'Cadastrar com Janela Popup do Google'}</span>
           </button>
 
           <div className="flex items-center justify-center gap-2 text-[11px] text-zinc-400">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Autenticação direta e protegida pelo Google</span>
+            <span>Autenticação direta pelo Google Identity Services</span>
           </div>
         </div>
 
-        {/* Benefits List */}
-        <div className="pt-4 border-t border-zinc-800/80 space-y-2 text-left text-xs text-zinc-400">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span>Criação de demonstração de site inclusa</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span>Buscas reais de comércios no Google Maps</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span>Demonstrações interativas com botão de WhatsApp</span>
-          </div>
+        {/* Divider */}
+        <div className="relative flex py-1 items-center">
+          <div className="flex-grow border-t border-zinc-800"></div>
+          <span className="flex-shrink mx-4 text-[10px] uppercase font-bold text-zinc-500">ou confirme seus dados</span>
+          <div className="flex-grow border-t border-zinc-800"></div>
         </div>
+
+        {/* Direct Inputs */}
+        <form onSubmit={handleManualRegister} className="space-y-3 text-left">
+          <div>
+            <label className="block text-[11px] font-bold text-zinc-400 mb-1">E-mail Google (@gmail.com)</label>
+            <div className="relative">
+              <Mail className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="seunome@gmail.com"
+                className="w-full pl-9 pr-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-white"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold text-zinc-400 mb-1">Nome do Perfil</label>
+            <div className="relative">
+              <UserIcon className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Seu Nome Completo"
+                className="w-full pl-9 pr-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-white"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold transition-all cursor-pointer"
+          >
+            Cadastrar com E-mail
+          </button>
+        </form>
 
         <div className="text-center pt-2">
           <p className="text-xs text-zinc-400">
@@ -121,13 +261,6 @@ export const RegisterPage: React.FC<Props> = ({ onNavigate }) => {
           </p>
         </div>
       </div>
-
-      {/* Google Auth Modal Fallback */}
-      <GoogleAuthModal
-        isOpen={showGoogleModal}
-        onClose={() => setShowGoogleModal(false)}
-        onSuccess={handleGoogleSuccess}
-      />
     </div>
   );
 };

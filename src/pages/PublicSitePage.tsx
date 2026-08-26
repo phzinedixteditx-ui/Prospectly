@@ -33,8 +33,8 @@ export const PublicSitePage: React.FC<Props> = ({ slug, onNavigate }) => {
 
     setSite(currentSite);
 
-    // Record Demo View Event in Real-Time (Lead no Radar)
-    if (currentSite) {
+    // Record Demo View Event in Real-Time (Lead no Radar) ONLY when site is 100% published
+    if (currentSite && currentSite.status === 'published') {
       const isMobile = window.innerWidth <= 768;
       StorageService.recordDemoView({
         siteId: currentSite.id,

@@ -190,9 +190,18 @@ export const ProjectsPage: React.FC<Props> = ({ onNavigate }) => {
                     </div>
 
                     {/* Status Badge */}
-                    <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-bold text-zinc-300">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span>Ativo</span>
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-bold">
+                      {project.status === 'published' ? (
+                        <>
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          <span className="text-emerald-400">Publicado</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                          <span className="text-amber-300">Rascunho</span>
+                        </>
+                      )}
                     </div>
 
                     {/* Bottom Info Overlay */}

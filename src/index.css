@@ -1,0 +1,286 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #09090b;
+    --bg-secondary: #121215;
+    --bg-tertiary: #18181b;
+    --border-color: #27272a;
+    --accent-zinc: #f4f4f5;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #09090b;
+    color: #f4f4f5;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    letter-spacing: -0.015em;
+  }
+
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #09090b;
+  }
+}
+
+/* Crisp Monochrome Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+/* UI/UX Pro Max Monochromatic SaaS Cards */
+.saas-card {
+  background: #121215;
+  border: 1px solid #27272a;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.saas-card:hover {
+  border-color: #3f3f46;
+  box-shadow: 0 8px 32px -4px rgba(0, 0, 0, 0.8);
+}
+
+.glass-panel {
+  background: #121215;
+  border: 1px solid #27272a;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.7);
+}
+
+.glass-card {
+  background: #121215;
+  border: 1px solid #27272a;
+  border-radius: 16px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: #3f3f46;
+  background: #18181b;
+}
+
+.bento-card {
+  background: #121215;
+  border: 1px solid #27272a;
+  border-radius: 20px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bento-card:hover {
+  border-color: #3f3f46;
+  background: #18181b;
+}
+
+/* Crisp Monochrome Badges */
+.badge-zinc {
+  background: #27272a;
+  color: #f4f4f5;
+  border: 1px solid #3f3f46;
+}
+
+.badge-emerald {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.badge-slate {
+  background: #18181b;
+  color: #a1a1aa;
+  border: 1px solid #27272a;
+}
+
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: fadeIn 0.35s ease-out forwards;
+}
+
+@keyframes beamFluid1 {
+  0% {
+    transform: translate3d(-3%, -6px, 0) rotate(-6deg) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translate3d(3%, 8px, 0) rotate(-5deg) scale(1.08);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(-3%, -6px, 0) rotate(-6deg) scale(1);
+    opacity: 0.6;
+  }
+}
+
+.animate-beam-fluid-1 {
+  animation: beamFluid1 8s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes beamFluid2 {
+  0% {
+    transform: translate3d(3%, 8px, 0) rotate(-6deg) scale(1.05);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(-3%, -8px, 0) rotate(-7deg) scale(0.95);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate3d(3%, 8px, 0) rotate(-6deg) scale(1.05);
+    opacity: 0.55;
+  }
+}
+
+.animate-beam-fluid-2 {
+  animation: beamFluid2 9s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes beamFlow {
+  0% {
+    background-position: 0% 50%;
+    transform: translate3d(0, -3px, 0) rotate(-6deg);
+  }
+  50% {
+    background-position: 100% 50%;
+    transform: translate3d(0, 3px, 0) rotate(-6deg);
+  }
+  100% {
+    background-position: 0% 50%;
+    transform: translate3d(0, -3px, 0) rotate(-6deg);
+  }
+}
+
+.animate-beam-flow {
+  background-size: 200% 200%;
+  animation: beamFlow 10s ease-in-out infinite;
+  will-change: transform, background-position;
+}
+
+
+/* Radiant Border Beam Container */
+.border-beam-card {
+  position: relative;
+  background: rgba(18, 18, 21, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 255, 255, 0.03);
+}
+
+.border-beam-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.6) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(14, 165, 233, 0.6) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+/* Builder Live Visual Animations */
+@keyframes builderFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes builderSlideUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes builderZoomIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes builderFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.anim-fade {
+  animation: builderFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-slide-up {
+  animation: builderSlideUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-zoom {
+  animation: builderZoomIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-float {
+  animation: builderFloat 4s ease-in-out infinite;
+}
+
+/* Builder Live Card Styles */
+.card-style-glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.45) !important;
+}
+
+.card-style-neon {
+  border: 1px solid rgba(245, 158, 11, 0.6) !important;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.22), inset 0 0 15px rgba(245, 158, 11, 0.08) !important;
+}
+
+.card-style-shadow3d {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-style-shadow3d:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.18) !important;
+}
+
+.card-style-flat {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+}
+
+.card-style-solid {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+}
+
+
+
+
+
+
